@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Boda M&L</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" />
+    </head>
+
+    <body>
+
+        <div class="container">
+            <div class="row reset-margins" style="width: 30%; text-align: center; margin: 0 auto;">
+                <div class="col-xs-12">
+                    <div class="login-form-container">
+                        <form id="getList">
+                            <h2>Enviar Reporte</h2>
+                            <div>
+                                <div class="form-group reset-margins">
+                                    <input type="text" name="email" id="inputEmail" placeholder="Correo" class="form-control email" required>
+                                </div>
+                                <div class="form-group reset-margins">
+                                    <input type="password" name="password" id="inputPassword" placeholder="Contraseña" class="form-control password" required>
+                                </div>
+                                <input type="text" style="display: none;" id="thisShouldBeEmptyId" name="thisShouldBeEmpty">
+                            </div>
+                            <button id="submitBtn" type="submit" class="btn btn-lg btn-primary btn-block">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </div> 
+        </div>
+
+        <script src="./node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="./invitados.js"></script>
+
+    </body>
+</html>

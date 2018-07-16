@@ -1,0 +1,29 @@
+{
+	"ErrorCodes": {
+		"500": "Error General",
+		"600": "No email",
+		"601": "No password",
+		"602": "No primer nombre",
+		"603": "No hay valores para editar",
+		"604": "No salt",
+		"605": "No id",
+		"606": "No id de objetivo",
+		"607": "No id de facebook",
+		"608": "No id de google",
+		"650": "Email incorrecto",
+		"651": "Password incorrecto",
+		"652": "Usuario no linkeado con facebook",
+		"653": "Usuario no linkeado con google",
+		"654": "Usuario ya existe",
+		"700": "Imagen con formato incorrecto",
+		"701": "No id",
+		"702": "No hay valores para editar",
+		"703": "No post id",
+		"704": "No label",
+		"705": "No word",
+		"800": "No hay nombre",
+		"900": "No es primera instalación",
+		"901": "No tiene password temporal",
+		"902": "Usuario no logueado"
+	}
+}

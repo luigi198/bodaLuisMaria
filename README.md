@@ -14,3 +14,7 @@ MONGODB_URI
 NODE_ENV
 SECRET_JWT
 SENDINBLUE_API_KEY
+
+## TODO
+Agregar usuarios
+Login

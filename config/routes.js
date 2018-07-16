@@ -1,22 +1,32 @@
 // controllers
 // var main = require('../app/controllers/main')
-// var api = require('../app/controllers/api')
+var api = require('../api/api')
 var path = require('path');
 
 // -----------------------
 // Expose
 // -----------------------
 
-module.exports = function(app) {
+module.exports = function(app, db) {
   
+  app.use(function (req, res, next) {
+    req.db = db;
+    next()
+  });
+
   //
   // API
   //
-  app.get('/api/helloworld', api.helloworld);
+  app.post('/lista', api.getList);
+  
+  // Listado de invitados
+  app.get('/lista', function (req, res) {
+    res.sendFile(path.join(__dirname, '../public', 'invitados.html'));
+  });
 
-
-  // SPA
-  app.get('*', function(req, res) {
-		res.sendFile(path.join(__dirname, 'public', 'layout.html'));
+  // index
+  app.get('/', function(req, res) {
+		res.sendFile(path.join(__dirname, '../public', 'index.html'));
 	});
+
 }

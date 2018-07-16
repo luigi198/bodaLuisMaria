@@ -16,7 +16,9 @@
     "foreman": "2.0.0",
     "jsonwebtoken": "8.0.1",
     "moment": "^2.22.2",
-    "mongodb": "2.2.33"
+    "mongo-xlsx": "^1.0.12",
+    "mongodb": "2.2.33",
+    "sendinblue-api": "^1.0.8"
   },
   "repository": {
     "type": "git",
