@@ -34,6 +34,20 @@ $(document).ready(function () {
 		}
 	});
 
+	var setGuestId = function () {
+		var urlSplit = window.location.search.split('name=');
+		var name = '';
+
+		if (urlSplit.length !== 2) {
+			return;
+		}
+
+		name = decodeURI(urlSplit[1]);
+		$('#guestNameId').text(name);
+	};
+
+	setGuestId();
+
 });
 
 typingMethod = function () {
