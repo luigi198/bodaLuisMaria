@@ -18,6 +18,7 @@ module.exports = function(app, db) {
   // API
   //
   app.post('/lista', api.getList);
+  app.get('/byname/:firstName/:secondName/:lastName', api.getByName);
   
   // Listado de invitados
   app.get('/lista', function (req, res) {

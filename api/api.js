@@ -18,7 +18,6 @@ var fs = require('fs');
 
 module.exports = {
   getList: function (req, res) {
-    console.log('entro: ', req.body);
 
     req.db.collection('Invitado').find().toArray().then(function (data) {
       return new Promise(function (resolve, reject) {
@@ -67,6 +66,38 @@ module.exports = {
     .catch(function (e) {
       responses.errorResponse(res, e);
     });
+
+  },
+
+  getByName: function (req, res) {
+
+    var searchQuery = {};
+
+    if (req.params.firstName !== '') {
+      searchQuery.firstName = {'$regex' : '.*' + req.params.firstName + '.*', '$options': 'i'};
+    }
+
+    if (req.params.secondName !== '') {
+      searchQuery.lastName = {'$regex' : '.*' + req.params.secondName + '.*', '$options': 'i'};
+    }
+
+    if (req.params.lastName !== '') {
+      searchQuery.secondLastName = {'$regex' : '.*' + req.params.lastName + '.*', '$options': 'i'};
+    }
+
+    req.db.collection('Invitado').find(searchQuery).toArray()
+      .then(function (array) {
+        if (array.length > 0) {
+          responses.successResponse(res, {'Invitado': array[0]});
+        } else {
+          responses.successResponse(res, {});
+        }
+
+      })
+      .catch(function (e) {
+        console.log(e);
+        responses.errorResponse(res, e);
+      })
 
   }
   

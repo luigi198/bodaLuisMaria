@@ -1,24 +1,47 @@
 var typingMethod;
+var ratio = 1.3;
+var invitado = null;
+
+var getFlipbookSize = function (windowWidth, flipbook) {
+	var width = 0;
+	var height = 0;
+
+	if (windowWidth > 1000) {
+		width = 1000;
+	} else if (windowWidth > 500) {
+		width = windowWidth * 0.9;
+	} else {
+		width = windowWidth * 0.95;
+	}
+
+	height = Math.floor(width / ratio);
+
+	flipbook.turn('size', width, height);
+};
+
+var getGuestName = function (url) {
+	var urlSplit = url.split('name=');
+
+	return decodeURI(urlSplit[1]);
+};
 
 $(document).ready(function () {
 
-	var getWidthPercentage = function () {
-		return $(document).width() * 0.6;
-	};
-
-	var getHeigthPercentage = function () {
-		return $(document).height() * 0.8;
-	};
-
-	getWidthPercentage();
+	window.addEventListener("resize", function() {
+		this.setTimeout(function () {
+			getFlipbookSize($(document).width(), $("#flipbook"));
+		}, 500);
+	});
 
 	$("#flipbook").turn({
-		width: getWidthPercentage(),
-		height: getHeigthPercentage(),
+		autoCenter: true,
+		gradients: true,
 		display: 'double',
 		acceleration: true,
 		elevation: 50
 	});
+
+	getFlipbookSize($(document).width(), $("#flipbook"));
 
 	$('#flipbook').bind('turned', function (e, page) {
 		if (page === 2) {
@@ -31,22 +54,31 @@ $(document).ready(function () {
 			if (typingElements[1] && typeof typingElements[1].innerHTML !== 'undefined') {
 				typingElements[1].innerHTML = '';
 			}
+
+			if (page === 6) {
+				
+			}
 		}
 	});
 
-	var setGuestId = function () {
-		var urlSplit = window.location.search.split('name=');
-		var name = '';
+	$('#guestNameId').text(getGuestName(window.location.search));
 
-		if (urlSplit.length !== 2) {
-			return;
+	var urlGetByName = '/byName';
+	var nameSplit = getGuestName(window.location.search).split(' ');
+	nameSplit.map(function (name) {
+		urlGetByName = urlGetByName + '/' + name;
+	});
+
+	$.get(urlGetByName, function(data) {
+		invitado = data.Invitado;
+		if (invitado && typeof invitado.cantidadInvitados !== 'undefined') {
+			$('#guestAmount').innerHTML = invitado.cantidadInvitados;
 		}
-
-		name = decodeURI(urlSplit[1]);
-		$('#guestNameId').text(name);
-	};
-
-	setGuestId();
+	})
+	.fail(function (e) {
+		console.error(e);
+		alert('Error cargando el usuario, revise su internet o contactese con el administrador');
+	});
 
 });
 
