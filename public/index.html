@@ -69,11 +69,11 @@
 				<div class="pageBackground">
 					<div class="pageInfoContainer">
 						<div class="fontCursive textCenter verticalAlignCenter">
-							<span class="bigFont">Favor confirmar asistencia con el código brindado:</span>
+							<span class="bigFont">Favor ingresar el código brindado:</span>
 							<br><br>
 							<div class="form-group">
-								<input type="text" class="form-control" placeholder="Ingrese el código" style="text-align: center;">
-								<button type="button" class="btn btn-primary" style="margin-top: 10px;">Confirmar</button>
+								<input id="userCode" type="text" class="form-control" placeholder="Ingrese el código" style="text-align: center;">
+								<button type="button" class="btn btn-primary" style="margin-top: 10px;" id="loadConfirmBtn">Cargar</button>
 							</div>
 							<br>
 							<span class="mediumBigFont">O llamar al número: 88726330 con Natalia Santamaria.</span>
@@ -84,9 +84,40 @@
 			<div class="pageContainer">
 				<div class="pageBackground">
 					<div class="pageInfoContainer">
-						<span class="fontCursive textCenter mediumFont verticalAlignCenter">
-							aqui van los invitados
-						</span>
+						<div class="fontCursive textCenter verticalAlignCenter" style="overflow: scroll; max-height: 70%;">
+							<!-- <p class="mediumBigFont" id="guestsInfo">Una vez que su código cargue, aquí puede ingresar sus invitadors</p> -->
+							<span class="mediumBigFont" id="guestsInfo" style="text-align: left;">Ingrese los datos</span>
+							<div id="guestsData">
+								<div style="margin-bottom: 10px;">
+									<p>Invitado:</p>
+									<input type="text" class="form-control guestData" placeholder="Nombre" />
+									<input type="text" class="form-control guestData" placeholder="Apellido" />
+									<input type="text" class="form-control guestData" placeholder="Apellido" />
+									<button type="button" class="btn btn-success">Agregar</button>
+								</div>
+								<div style="margin-bottom: 10px;">
+									<p>Invitado:</p>
+									<input type="text" class="form-control guestData" placeholder="Nombre" />
+									<input type="text" class="form-control guestData" placeholder="Primer Apellido" />
+									<input type="text" class="form-control guestData" placeholder="Segundo Apellido" />
+									<button type="button" class="btn btn-success">Agregar</button>
+								</div>
+								<div style="margin-bottom: 10px;">
+									<p>Invitado:</p>
+									<input type="text" class="form-control guestData" placeholder="Nombre" />
+									<input type="text" class="form-control guestData" placeholder="Apellido" />
+									<input type="text" class="form-control guestData" placeholder="Apellido" />
+									<button type="button" class="btn btn-success">Agregar</button>
+								</div>
+								<div style="margin-bottom: 10px;">
+									<p>Invitado:</p>
+									<input type="text" class="form-control guestData" placeholder="Nombre" />
+									<input type="text" class="form-control guestData" placeholder="Apellido" />
+									<input type="text" class="form-control guestData" placeholder="Apellido" />
+									<button type="button" class="btn btn-success">Agregar</button>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

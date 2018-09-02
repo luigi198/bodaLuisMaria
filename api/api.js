@@ -99,6 +99,28 @@ module.exports = {
         responses.errorResponse(res, e);
       })
 
+  },
+
+  codeVerification: function (req, res) {
+
+    if (!req.body.code) {
+      return responses.customErrorResponse(res, 606);
+    }
+
+    req.db.collection('Invitado').find({code: req.body.code}).toArray()
+      .then(function (array) {
+        if (array.length > 0) {
+          responses.successResponse(res, {'Invitado': array[0]});
+        } else {
+          responses.customErrorResponse(res, 607);
+        }
+      })
+      .catch(function (e) {
+        console.error(e);
+        responses.errorResponse(e);
+      });
+      
+
   }
   
 };

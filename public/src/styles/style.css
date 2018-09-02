@@ -83,6 +83,13 @@ body {
 	font-size: 1em;
 }
 
+.guestData {
+	width: 100%;
+	float: left;
+	margin-bottom: 5px;
+	text-align: center;
+}
+
 /* Manejo de tamaño de fuentes responsive */
 
 @media (max-width: 1000px) {

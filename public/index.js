@@ -1,6 +1,7 @@
 var typingMethod;
 var ratio = 1.3;
 var invitado = null;
+var userLoaded = false;
 
 var getFlipbookSize = function (windowWidth, flipbook) {
 	var width = 0;
@@ -23,6 +24,27 @@ var getGuestName = function (url) {
 	var urlSplit = url.split('name=');
 
 	return decodeURI(urlSplit[1]);
+};
+
+var createInputForGuests = function (amount) {
+
+};
+
+var loadCode = function (code) {
+	$.post('/loadCode', {code: code}, function (response) {
+		$('#loadConfirmBtn').prop('disabled', false);
+		$('#loadConfirmBtn').prop('value', 'Confirmar');
+		/**
+		 * TODO: Ver el response, si el user ya fue confirmado, cambiar boton a Cancelar
+		 * Cambiar el string titulo y poner el text y cantidad de invitados en parentesis
+		 * ver cantidad de invitados y ver los invitados del response, comparar cantidad, si el array tiene menos, agregar inputs
+		 * el resto poner solo el string del nombre y un botón de cancelar
+		 */
+	})
+	.fail(function (e) {
+		console.error(e);
+		alert('Error verificando el código, asegurese de que el código sea el asignado');
+	});
 };
 
 $(document).ready(function () {
@@ -55,9 +77,19 @@ $(document).ready(function () {
 				typingElements[1].innerHTML = '';
 			}
 
-			if (page === 6) {
+		}
+
+		if (page === 8) {
+			$('#loadConfirmBtn').click(function (e) {
 				
-			}
+				$('#loadConfirmBtn').prop('disabled', true);
+		
+				if (!userLoaded) {
+					var code = $('#userCode').val();
+					loadCode(code);
+				}
+		
+			});
 		}
 	});
 
@@ -69,15 +101,40 @@ $(document).ready(function () {
 		urlGetByName = urlGetByName + '/' + name;
 	});
 
-	$.get(urlGetByName, function(data) {
-		invitado = data.Invitado;
-		if (invitado && typeof invitado.cantidadInvitados !== 'undefined') {
-			$('#guestAmount').innerHTML = invitado.cantidadInvitados;
+	if (urlGetByName.indexOf('undefined') === -1) {
+		$.get(urlGetByName, function(data) {
+			invitado = data.Invitado;
+			if (invitado && typeof invitado.cantidadInvitados !== 'undefined') {
+				$('#guestAmount').innerHTML = invitado.cantidadInvitados;
+			}
+		})
+		.fail(function (e) {
+			console.error(e);
+			alert('Error cargando el usuario, revise su internet o contactese con el administrador');
+		});
+	}
+
+	console.log($('#loadConfirmBtn'));
+
+	$('#loadConfirmBtn').click(function (e) {
+		console.log('entro');
+		$('#loadConfirmBtn').prop('disabled', true);
+
+		if (!userLoaded) {
+			var code = $('#userCode').val();
+			console.log(code);
+			if (code !== '') {
+				$.post('/loadCode', {code: code}, function () {
+					$('#loadConfirmBtn').prop('disabled', false);
+					$('#loadConfirmBtn').prop('value', 'Confirmar');
+				})
+				.fail(function (e) {
+					console.error(e);
+					alert('Error verificando el código, asegurese de que el código sea el asignado');
+				});
+			}
 		}
-	})
-	.fail(function (e) {
-		console.error(e);
-		alert('Error cargando el usuario, revise su internet o contactese con el administrador');
+
 	});
 
 });
