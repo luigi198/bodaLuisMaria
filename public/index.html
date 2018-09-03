@@ -84,39 +84,13 @@
 			<div class="pageContainer">
 				<div class="pageBackground">
 					<div class="pageInfoContainer">
-						<div class="fontCursive textCenter verticalAlignCenter" style="overflow: scroll; max-height: 70%;">
+						<div class="fontCursive textCenter verticalAlignCenter" style="overflow: scroll; max-height: 70%; padding: 0px 2px;">
 							<!-- <p class="mediumBigFont" id="guestsInfo">Una vez que su código cargue, aquí puede ingresar sus invitadors</p> -->
-							<span class="mediumBigFont" id="guestsInfo" style="text-align: left;">Ingrese los datos</span>
-							<div id="guestsData">
-								<div style="margin-bottom: 10px;">
-									<p>Invitado:</p>
-									<input type="text" class="form-control guestData" placeholder="Nombre" />
-									<input type="text" class="form-control guestData" placeholder="Apellido" />
-									<input type="text" class="form-control guestData" placeholder="Apellido" />
-									<button type="button" class="btn btn-success">Agregar</button>
-								</div>
-								<div style="margin-bottom: 10px;">
-									<p>Invitado:</p>
-									<input type="text" class="form-control guestData" placeholder="Nombre" />
-									<input type="text" class="form-control guestData" placeholder="Primer Apellido" />
-									<input type="text" class="form-control guestData" placeholder="Segundo Apellido" />
-									<button type="button" class="btn btn-success">Agregar</button>
-								</div>
-								<div style="margin-bottom: 10px;">
-									<p>Invitado:</p>
-									<input type="text" class="form-control guestData" placeholder="Nombre" />
-									<input type="text" class="form-control guestData" placeholder="Apellido" />
-									<input type="text" class="form-control guestData" placeholder="Apellido" />
-									<button type="button" class="btn btn-success">Agregar</button>
-								</div>
-								<div style="margin-bottom: 10px;">
-									<p>Invitado:</p>
-									<input type="text" class="form-control guestData" placeholder="Nombre" />
-									<input type="text" class="form-control guestData" placeholder="Apellido" />
-									<input type="text" class="form-control guestData" placeholder="Apellido" />
-									<button type="button" class="btn btn-success">Agregar</button>
-								</div>
-							</div>
+							<span class="mediumBigFont" id="guestsInfo" style="text-align: left;">Ingrese los datos<span id="guestsAmount"></span></span>
+							<!-- Data is the input for guests' data -->
+							<div id="guestsData"></div>
+							<!-- Information is the name and data already added -->
+							<div id="guestsInformation"></div>
 						</div>
 					</div>
 				</div>

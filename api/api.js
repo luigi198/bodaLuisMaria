@@ -120,6 +120,89 @@ module.exports = {
         responses.errorResponse(e);
       });
       
+  },
+
+  addGuest: function (req, res) {
+
+    if (!req.body.code) {
+      return responses.customErrorResponse(res, 606);
+    }
+
+    if (!req.body.guest) {
+      return responses.customErrorResponse(res, 608);
+    }
+
+    if (!req.body.guest.firstName || !req.body.guest.lastName) {
+      return responses.customErrorResponse(res, 609);
+    }
+
+    req.db.collection('Invitado').find({code: req.body.code}).toArray()
+      .then(function (array) {
+        return new Promise(function (resolve, reject) {
+          if (array.length > 0) {
+            resolve(array[0]);
+          } else {
+            reject({code: 607});
+          }
+        });
+      })
+      .then(function (invitado) {
+        invitado.invitados.push(req.body.guest);
+        return req.db.collection('Invitado').update({code: req.body.code}, {$set: {
+          invitados: invitado.invitados
+        }});
+      })
+      .then(function () {
+        responses.successResponse(res, {});
+      })
+      .catch(function (e) {
+        console.error(e);
+        responses.errorResponse(e);
+      });
+
+  },
+
+  removeGuest: function (req, res) {
+
+    if (!req.body.code) {
+      return responses.customErrorResponse(res, 606);
+    }
+
+    if (!req.body.guest) {
+      return responses.customErrorResponse(res, 608);
+    }
+
+    req.db.collection('Invitado').find({code: req.body.code}).toArray()
+      .then(function (array) {
+        return new Promise(function (resolve, reject) {
+          if (array.length > 0) {
+            resolve(array[0]);
+          } else {
+            reject({code: 607});
+          }
+        });
+      })
+      .then(function (invitado) {
+        var i, n;
+
+        for (i = 0, n = invitado.invitados.length; i<n; i++) {
+          if (invitado.invitados[i].firstName === req.body.guest.firstName && invitado.invitados[i].lastName === req.body.guest.lastName) {
+            invitado.invitados.splice(i, 1);
+            break;
+          }
+        }
+        
+        return req.db.collection('Invitado').update({code: req.body.code}, {$set: {
+          invitados: invitado.invitados
+        }});
+      })
+      .then(function () {
+        responses.successResponse(res, {});
+      })
+      .catch(function (e) {
+        console.error(e);
+        responses.errorResponse(e);
+      });
 
   }
   

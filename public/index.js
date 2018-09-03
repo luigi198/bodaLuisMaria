@@ -22,18 +22,104 @@ var getFlipbookSize = function (windowWidth, flipbook) {
 
 var getGuestName = function (url) {
 	var urlSplit = url.split('name=');
+	var aux = decodeURI(urlSplit[1]);
 
-	return decodeURI(urlSplit[1]);
+	return aux === 'undefined' ? '' : aux;
 };
 
-var createInputForGuests = function (amount) {
+var removeGuest = function () {
+	$('.removeGuest').click(function () {
+		var elementId = $(this).attr('id');
+		var guestNumber = elementId.split('guestDataNumber')[1];
+		var obj = {
+			code: invitado.code,
+			guest: invitado.invitados[guestNumber]
+		};
 
+		$.post('/removeGuest', obj, function (response) {
+			$('#guestDataContainer' + guestNumber).remove();
+			invitado.invitados.splice(guestNumber, 1);
+			addGuestInfo(invitado.cantidadInvitados - invitado.invitados.length);
+		});
+	});
+};
+
+var addGuest = function () {
+	$('.addGuest').click(function () {
+		var elementId = $(this).attr('id');
+		var guestNumber = elementId.split('guestNumber')[1];
+		var guestObj = {
+			firstName: $('#guestName' + guestNumber).val(),
+			lastName: $('#guestLastName' + guestNumber).val(),
+			secondLastName: $('#guestSecondLastName' + guestNumber).val()
+		};
+		var validObj = true;
+
+		if (guestObj.firstName === '') {
+			$('#guestName' + guestNumber).addClass('is-invalid');
+			$('#errorMsgFirstName' + guestNumber).show('slow');
+			validObj = false;
+		} else {
+			$('#guestName' + guestNumber).removeClass('is-invalid');
+			$('#errorMsgFirstName' + guestNumber).hide('slow');
+		}
+		if (guestObj.lastName === '') {
+			$('#guestLastName' + guestNumber).addClass('is-invalid');
+			$('#errorMsgLastName' + guestNumber).show('slow');
+			validObj = false;
+		} else {
+			$('#guestLastName' + guestNumber).removeClass('is-invalid');
+			$('#errorMsgLastName' + guestNumber).hide('slow');
+		}
+
+		if (validObj) {
+			var body = {code: invitado.code, guest: {}};
+			for (var k in guestObj) {
+				body.guest[k] = guestObj[k];
+			}
+
+			$.post('/addGuest', body, function (response) {
+				$('#guestContainer' + guestNumber).remove();
+				invitado.invitados.push(guestObj);
+				addGuestData(guestObj, invitado.invitados.length - 1);
+			});
+		}
+
+	});
+};
+
+var addGuestData = function (data, i) {
+	$('#guestsInformation').append('<div id="guestDataContainer' + i + '" style="margin-bottom: 10px;"><p>Invitado:</p><p style="font-weight: bold;">' + data.firstName + ' ' + data.lastName + ' ' + data.secondLastName + '</p><button id="guestDataNumber' + i + '" type="button" class="btn btn-danger removeGuest">Cancelar</button></div>')
+};
+
+var addGuestInfo = function (i) {
+	$('#guestsData').append('<div id="guestContainer' + i + '" style="margin-bottom: 10px;"><p>Invitado:</p><input id="guestName' + i + '" type="text" class="form-control guestData" placeholder="Nombre" /><div id="errorMsgFirstName' + i + '" class="alert alert-danger" style="display: none;" role="alert">El Nombre es requerido!</div><input type="text" id="guestLastName' + i + '" class="form-control guestData" placeholder="Primer Apellido" /><div id="errorMsgLastName' + i + '" class="alert alert-danger" style="display: none;" role="alert">El Apellido es requerido!</div><input type="text" id="guestSecondLastName' + i + '" class="form-control guestData" placeholder="Segundo Apellido" /><button id="guestNumber' + i + '" type="button" class="btn btn-success addGuest">Agregar</button></div>');
 };
 
 var loadCode = function (code) {
 	$.post('/loadCode', {code: code}, function (response) {
+		invitado = response.Invitado;
+
 		$('#loadConfirmBtn').prop('disabled', false);
 		$('#loadConfirmBtn').prop('value', 'Confirmar');
+		console.log(response);
+		
+		$("#guestsAmount").text(" (" + response.Invitado.cantidadInvitados + ")");
+
+		var i, n = response.Invitado.cantidadInvitados - response.Invitado.invitados.length;
+		for (i = 0; i<n; i++) {
+			addGuestInfo(i);
+		}
+
+		addGuest();
+
+		for (i = 0, n = response.Invitado.invitados.length; i<n; i++) {
+			addGuestData(response.Invitado.invitados[i], i);
+		}
+
+		if (response.Invitado.invitados.length > 0) {
+			removeGuest();
+		}
 		/**
 		 * TODO: Ver el response, si el user ya fue confirmado, cambiar boton a Cancelar
 		 * Cambiar el string titulo y poner el text y cantidad de invitados en parentesis
@@ -113,8 +199,6 @@ $(document).ready(function () {
 			alert('Error cargando el usuario, revise su internet o contactese con el administrador');
 		});
 	}
-
-	console.log($('#loadConfirmBtn'));
 
 	$('#loadConfirmBtn').click(function (e) {
 		console.log('entro');

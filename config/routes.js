@@ -20,6 +20,8 @@ module.exports = function(app, db) {
   app.post('/lista', api.getList);
   app.get('/byname/:firstName/:secondName/:lastName', api.getByName);
   app.post('/loadCode', api.codeVerification);
+  app.post('/addGuest', api.addGuest);
+  app.post('/removeGuest', api.removeGuest);
   
   // Listado de invitados
   app.get('/lista', function (req, res) {
