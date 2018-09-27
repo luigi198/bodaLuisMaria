@@ -2,8 +2,11 @@ var typingMethod;
 var ratio = 1.3;
 var invitado = null;
 var userLoaded = false;
+var iSpeed = 100; // time delay of print out
+var typewriter;
+var typing = false;
 
-var getFlipbookSize = function (windowWidth, flipbook) {
+var getFlipbookSize = function (windowWidth, windowHeight, flipbook) {
 	var width = 0;
 	var height = 0;
 
@@ -17,18 +20,20 @@ var getFlipbookSize = function (windowWidth, flipbook) {
 
 	height = Math.floor(width / ratio);
 
+	if (height > windowHeight) {
+		height = windowHeight - (windowHeight * 0.1);
+		width = Math.floor(ratio * height);
+	}
+
 	flipbook.turn('size', width, height);
 };
 
-var getGuestName = function (url) {
-	var urlSplit = url.split('name=');
-	var aux = decodeURI(urlSplit[1]);
-
-	return aux === 'undefined' ? '' : aux;
+var removeGuestUnbind = function () {
+	$('body').off('click', '.removeGuest');
 };
 
 var removeGuest = function () {
-	$('.removeGuest').click(function () {
+	$('body').on('click', '.removeGuest', function () {
 		var elementId = $(this).attr('id');
 		var guestNumber = elementId.split('guestDataNumber')[1];
 		var obj = {
@@ -38,14 +43,26 @@ var removeGuest = function () {
 
 		$.post('/removeGuest', obj, function (response) {
 			$('#guestDataContainer' + guestNumber).remove();
-			invitado.invitados.splice(guestNumber, 1);
-			addGuestInfo(invitado.cantidadInvitados - invitado.invitados.length);
+			if (invitado) {
+				invitado.invitados.splice(guestNumber, 1);
+				addGuestInfo(invitado.cantidadInvitados - invitado.invitados.length);
+				removeGuestUnbind();
+				removeGuest();
+			}
+		})
+		.fail(function (e) {
+			console.error(e);
+			alert('Error quitando invitado, porfavor refresque la página y trate de nuevo o contactese con los organizadores');
 		});
 	});
 };
 
+var addGuestUnbind = function () {
+	$('body').off('click', '.addGuest');
+};
+
 var addGuest = function () {
-	$('.addGuest').click(function () {
+	$('body').on('click', '.addGuest', function () {
 		var elementId = $(this).attr('id');
 		var guestNumber = elementId.split('guestNumber')[1];
 		var guestObj = {
@@ -82,6 +99,12 @@ var addGuest = function () {
 				$('#guestContainer' + guestNumber).remove();
 				invitado.invitados.push(guestObj);
 				addGuestData(guestObj, invitado.invitados.length - 1);
+				addGuestUnbind();
+				addGuest();
+			})
+			.fail(function (e) {
+				console.error(e);
+				alert('Error agregando invitado, porfavor refresque la página y trate de nuevo o contactese con los organizadores');
 			});
 		}
 
@@ -102,30 +125,20 @@ var loadCode = function (code) {
 
 		$('#loadConfirmBtn').prop('disabled', false);
 		$('#loadConfirmBtn').prop('value', 'Confirmar');
-		console.log(response);
+
+		$('#guestsData').empty();
+		$('#guestsInformation').empty();
 		
-		$("#guestsAmount").text(" (" + response.Invitado.cantidadInvitados + ")");
-
-		var i, n = response.Invitado.cantidadInvitados - response.Invitado.invitados.length;
-		for (i = 0; i<n; i++) {
-			addGuestInfo(i);
+		if (typing) {
+			typing = false;
+			setTimeout(function () {
+				typing = true;
+				typewriter('guestNameId', new Array(invitado.firstName + " " + invitado.lastName + " " + invitado.secondLastName));
+			}, 200);
+		} else {
+			typing = true;
+			typewriter('guestNameId', new Array(invitado.firstName + " " + invitado.lastName + " " + invitado.secondLastName));
 		}
-
-		addGuest();
-
-		for (i = 0, n = response.Invitado.invitados.length; i<n; i++) {
-			addGuestData(response.Invitado.invitados[i], i);
-		}
-
-		if (response.Invitado.invitados.length > 0) {
-			removeGuest();
-		}
-		/**
-		 * TODO: Ver el response, si el user ya fue confirmado, cambiar boton a Cancelar
-		 * Cambiar el string titulo y poner el text y cantidad de invitados en parentesis
-		 * ver cantidad de invitados y ver los invitados del response, comparar cantidad, si el array tiene menos, agregar inputs
-		 * el resto poner solo el string del nombre y un botón de cancelar
-		 */
 	})
 	.fail(function (e) {
 		console.error(e);
@@ -137,9 +150,17 @@ $(document).ready(function () {
 
 	window.addEventListener("resize", function() {
 		this.setTimeout(function () {
-			getFlipbookSize($(document).width(), $("#flipbook"));
+			getFlipbookSize($(document).width(), $(document).height(), $("#flipbook"));
 		}, 500);
 	});
+
+	var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+	if(!isChrome){
+		$('#iframeAudio').remove()
+	}
+	else{
+		$('#playAudio').remove() //just to make sure that it will not have 2x audio in the background 
+	}
 
 	$("#flipbook").turn({
 		autoCenter: true,
@@ -149,10 +170,26 @@ $(document).ready(function () {
 		elevation: 50
 	});
 
-	getFlipbookSize($(document).width(), $("#flipbook"));
+	getFlipbookSize($(document).width(), $(document).height(), $("#flipbook"));
 
 	$('#flipbook').bind('turned', function (e, page) {
-		if (page === 2) {
+		typing = false;
+
+		if (page === 1) {
+			$('#turnBtnLeft').addClass('disabled');
+		} else {
+			$('#turnBtnLeft').removeClass('disabled');
+		}
+
+		if (page >= $('#flipbook').turn('pages') - 1) {
+			$('#turnBtnRight').addClass('disabled');
+		} else {
+			$('#turnBtnRight').removeClass('disabled');
+		}
+
+		if (page === 2 || page === 3) {
+			$('#page1').text('');
+			$('#page2').text('');
 			typingMethod();		
 		} else {
 			var typingElements = [document.getElementById('page1'), document.getElementById('page2')];
@@ -165,7 +202,7 @@ $(document).ready(function () {
 
 		}
 
-		if (page === 8) {
+		if (page === 4 || page === 5) {
 			$('#loadConfirmBtn').click(function (e) {
 				
 				$('#loadConfirmBtn').prop('disabled', true);
@@ -177,45 +214,63 @@ $(document).ready(function () {
 		
 			});
 		}
-	});
 
-	$('#guestNameId').text(getGuestName(window.location.search));
+		if (page === 8 || page === 9) {
+			if (invitado) {
+				$("#guestAmount").text(" (" + invitado.cantidadInvitados + ")");
+				$('#guestsData').empty();
+				$('#guestsInformation').empty();
 
-	var urlGetByName = '/byName';
-	var nameSplit = getGuestName(window.location.search).split(' ');
-	nameSplit.map(function (name) {
-		urlGetByName = urlGetByName + '/' + name;
-	});
-
-	if (urlGetByName.indexOf('undefined') === -1) {
-		$.get(urlGetByName, function(data) {
-			invitado = data.Invitado;
-			if (invitado && typeof invitado.cantidadInvitados !== 'undefined') {
-				$('#guestAmount').innerHTML = invitado.cantidadInvitados;
+				var i, n = invitado.cantidadInvitados - invitado.invitados.length;
+				for (i = 0; i<n; i++) {
+					addGuestInfo(i);
+				}
+	
+				addGuest();
+	
+				for (i = 0, n = invitado.invitados.length; i<n; i++) {
+					addGuestData(invitado.invitados[i], i);
+				}
+	
+				if (invitado.invitados.length > 0) {
+					removeGuest();
+				}
 			}
-		})
-		.fail(function (e) {
-			console.error(e);
-			alert('Error cargando el usuario, revise su internet o contactese con el administrador');
-		});
-	}
+		}
+	});
+
+	$('#turnBtnLeft').click(function () {
+		if ($('#flipbook').turn('page') > 1) {
+			$('#flipbook').turn('previous');
+		}
+	});
+
+	$('#turnBtnRight').click(function () {
+		if ($('#flipbook').turn('page') !== $('#flipbook').turn('pages')) {
+			$('#flipbook').turn('next');
+		}
+	});
+
+	$('body').zoom({
+		flipbook: $("#flipbook"),
+		max: 3,
+		when: {
+			swipeLeft: function () {
+				$('#flipbook').turn('next');
+			},
+			swipeRight: function () {
+				$('#flipbook').turn('previous');
+			}
+		}
+	});
 
 	$('#loadConfirmBtn').click(function (e) {
-		console.log('entro');
 		$('#loadConfirmBtn').prop('disabled', true);
 
 		if (!userLoaded) {
 			var code = $('#userCode').val();
-			console.log(code);
 			if (code !== '') {
-				$.post('/loadCode', {code: code}, function () {
-					$('#loadConfirmBtn').prop('disabled', false);
-					$('#loadConfirmBtn').prop('value', 'Confirmar');
-				})
-				.fail(function (e) {
-					console.error(e);
-					alert('Error verificando el código, asegurese de que el código sea el asignado');
-				});
+				loadCode(code);
 			}
 		}
 
@@ -223,39 +278,30 @@ $(document).ready(function () {
 
 });
 
-typingMethod = function () {
-	// set up text to print, each item in array is new line
-	var aText = new Array(
-		"Every once in a while, in the middle of an ordinary Life, Love gives us a Fairytale..."
-	);
-	var secondText = new Array (
-		"Welcome to our Fairytale"
-	);
-	var iSpeed = 100; // time delay of print out
+typewriter = function (id, array, callback)
+{
+	var iIndex = 0; // start printing array at this posision
+	var iArrLength = array[0].length; // the length of the text array
+	var iScrollAt = 20; // start scrolling up at this many lines
 
-	var typewriter = function (id, array, callback)
-	{
-		var iIndex = 0; // start printing array at this posision
-		var iArrLength = array[0].length; // the length of the text array
-		var iScrollAt = 20; // start scrolling up at this many lines
-
-		var iTextPos = 0; // initialise text position
-		var sContents = ''; // initialise contents variable
-		var iRow; // initialise current row
-		
-		var recursive;
-		sContents =  ' ';
-		
-		recursive = function () {
+	var iTextPos = 0; // initialise text position
+	var sContents = ''; // initialise contents variable
+	var iRow; // initialise current row
+	
+	var recursive;
+	sContents =  ' ';
+	
+	recursive = function () {
+		if (typing) {
 			iRow = Math.max(0, iIndex-iScrollAt);
 			var destination = document.getElementById(id);
-
+	
 			while ( iRow < iIndex ) {
 				sContents += array[iRow++] + '<br />';
 			}
-
+	
 			destination.innerHTML = sContents + array[iIndex].substring(0, iTextPos) + "_";
-
+	
 			if ( iTextPos++ === iArrLength ) {
 				iTextPos = 0;
 				iIndex++;
@@ -265,6 +311,7 @@ typingMethod = function () {
 						recursive();
 					}, 500);
 				} else {
+					typing = false
 					if (typeof callback === 'function') {
 						callback();
 					}
@@ -274,13 +321,24 @@ typingMethod = function () {
 					recursive();
 				}, iSpeed);
 			}
-		};
+		}
+	};
 
-		recursive();
-	}
+	recursive();
+}
 
+typingMethod = function () {
+	// set up text to print, each item in array is new line
+	var aText = new Array(
+		"Every once in a while, in the middle of an ordinary Life, Love gives us a Fairytale..."
+	);
+	var secondText = new Array (
+		"Welcome to our Fairytale"
+	);
 
+	typing = true;
 	typewriter('page1', aText, function () {
+		typing = true;
 		typewriter('page2', secondText);
 	});
 };

@@ -2,10 +2,18 @@ db.Invitado.insert({
     firstName: 'Luis',
     lastName: 'Cordoba',
     secondLastName: 'Granera',
-    confirmado: false,
     cantidadInvitados: 2,
     invitados: [],
     code: '270993'
+})
+
+db.Invitado.insert({
+    firstName: 'Familia',
+    lastName: 'Granera',
+    secondLastName: 'Blanco',
+    cantidadInvitados: 2,
+    invitados: [],
+    code: '230163'
 })
 
 db.Invitado.insert({
