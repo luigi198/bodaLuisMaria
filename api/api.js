@@ -147,10 +147,14 @@ module.exports = {
         });
       })
       .then(function (invitado) {
-        invitado.invitados.push(req.body.guest);
-        return req.db.collection('Invitado').update({code: req.body.code}, {$set: {
-          invitados: invitado.invitados
-        }});
+        if (invitado.cantidadInvitados > invitado.invitados.length) {
+          invitado.invitados.push(req.body.guest);
+          return req.db.collection('Invitado').update({code: req.body.code}, {$set: {
+            invitados: invitado.invitados
+          }});
+        } else {
+          return Promise.reject({code: 610});
+        }
       })
       .then(function () {
         responses.successResponse(res, {});

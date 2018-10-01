@@ -45,9 +45,24 @@ var removeGuest = function () {
 			$('#guestDataContainer' + guestNumber).remove();
 			if (invitado) {
 				invitado.invitados.splice(guestNumber, 1);
-				addGuestInfo(invitado.cantidadInvitados - invitado.invitados.length);
+				$('#guestsData').empty();
+				$('#guestsInformation').empty();
 				removeGuestUnbind();
-				removeGuest();
+
+				var i, n = invitado.cantidadInvitados - invitado.invitados.length;
+				for (i = 0; i<n; i++) {
+					addGuestInfo(i);
+				}
+	
+				addGuest();
+	
+				for (i = 0, n = invitado.invitados.length; i<n; i++) {
+					addGuestData(invitado.invitados[i], i);
+				}
+	
+				if (invitado.invitados.length > 0) {
+					removeGuest();
+				}
 			}
 		})
 		.fail(function (e) {
@@ -98,9 +113,13 @@ var addGuest = function () {
 			$.post('/addGuest', body, function (response) {
 				$('#guestContainer' + guestNumber).remove();
 				invitado.invitados.push(guestObj);
-				addGuestData(guestObj, invitado.invitados.length - 1);
 				addGuestUnbind();
+				removeGuestUnbind();
+				addGuestData(guestObj, invitado.invitados.length - 1);
 				addGuest();
+				if (invitado.invitados.length > 0) {
+					removeGuest();
+				}
 			})
 			.fail(function (e) {
 				console.error(e);
@@ -112,11 +131,11 @@ var addGuest = function () {
 };
 
 var addGuestData = function (data, i) {
-	$('#guestsInformation').append('<div id="guestDataContainer' + i + '" style="margin-bottom: 10px;"><p>Invitado:</p><p style="font-weight: bold;">' + data.firstName + ' ' + data.lastName + ' ' + data.secondLastName + '</p><button id="guestDataNumber' + i + '" type="button" class="btn btn-danger removeGuest">Cancelar</button></div>')
+	$('#guestsInformation').append('<div id="guestDataContainer' + i + '" style="margin-bottom: 1rem;"><p class="mediumBigFont">Invitado:</p><p style="font-weight: bold;">' + data.firstName + ' ' + data.lastName + ' ' + data.secondLastName + '</p><button id="guestDataNumber' + i + '" type="button" class="btn btn-danger btn-font-resize removeGuest">Cancelar</button></div>')
 };
 
 var addGuestInfo = function (i) {
-	$('#guestsData').append('<div id="guestContainer' + i + '" style="margin-bottom: 10px;"><p>Invitado:</p><input id="guestName' + i + '" type="text" class="form-control guestData" placeholder="Nombre" /><div id="errorMsgFirstName' + i + '" class="alert alert-danger" style="display: none;" role="alert">El Nombre es requerido!</div><input type="text" id="guestLastName' + i + '" class="form-control guestData" placeholder="Primer Apellido" /><div id="errorMsgLastName' + i + '" class="alert alert-danger" style="display: none;" role="alert">El Apellido es requerido!</div><input type="text" id="guestSecondLastName' + i + '" class="form-control guestData" placeholder="Segundo Apellido" /><button id="guestNumber' + i + '" type="button" class="btn btn-success addGuest">Agregar</button></div>');
+	$('#guestsData').append('<div id="guestContainer' + i + '" style="margin-bottom: 10px;"><p class="mediumBigFont">Invitado:</p><input id="guestName' + i + '" type="text" class="form-control guestData input-font-resize" placeholder="Nombre" /><div id="errorMsgFirstName' + i + '" class="alert alert-danger mediumBigFont" style="display: none;" role="alert">El Nombre es requerido!</div><input type="text" id="guestLastName' + i + '" class="form-control guestData input-font-resize" placeholder="Primer Apellido" /><div id="errorMsgLastName' + i + '" class="alert alert-danger" style="display: none;" role="alert">El Apellido es requerido!</div><input type="text" id="guestSecondLastName' + i + '" class="form-control guestData input-font-resize" placeholder="Segundo Apellido" /><button id="guestNumber' + i + '" type="button" class="btn btn-success btn-font-resize addGuest">Agregar</button></div>');
 };
 
 var loadCode = function (code) {
@@ -128,6 +147,13 @@ var loadCode = function (code) {
 
 		$('#guestsData').empty();
 		$('#guestsInformation').empty();
+
+		var viewport = document.querySelector('meta[name="viewport"]');
+
+		if ( viewport ) {
+			viewport.content = 'initial-scale=1';
+			viewport.content = 'width=device-width';
+		}
 		
 		if (typing) {
 			typing = false;
@@ -142,6 +168,7 @@ var loadCode = function (code) {
 	})
 	.fail(function (e) {
 		console.error(e);
+		$('#loadConfirmBtn').prop('disabled', false);
 		alert('Error verificando el código, asegurese de que el código sea el asignado');
 	});
 };
@@ -203,16 +230,20 @@ $(document).ready(function () {
 		}
 
 		if (page === 4 || page === 5) {
-			$('#loadConfirmBtn').click(function (e) {
+			$('body').off('click', '#loadConfirmBtn');
+			$('body').on('click', '#loadConfirmBtn', function (e) {
+				console.log('entro');
+				$("#flipbook").turn("disable", false);
 				
 				$('#loadConfirmBtn').prop('disabled', true);
-		
+				
 				if (!userLoaded) {
 					var code = $('#userCode').val();
 					loadCode(code);
 				}
-		
+				
 			});
+			$("#flipbook").turn("disable", true);
 		}
 
 		if (page === 8 || page === 9) {
@@ -220,6 +251,7 @@ $(document).ready(function () {
 				$("#guestAmount").text(" (" + invitado.cantidadInvitados + ")");
 				$('#guestsData').empty();
 				$('#guestsInformation').empty();
+				removeGuestUnbind();
 
 				var i, n = invitado.cantidadInvitados - invitado.invitados.length;
 				for (i = 0; i<n; i++) {
@@ -262,18 +294,6 @@ $(document).ready(function () {
 				$('#flipbook').turn('previous');
 			}
 		}
-	});
-
-	$('#loadConfirmBtn').click(function (e) {
-		$('#loadConfirmBtn').prop('disabled', true);
-
-		if (!userLoaded) {
-			var code = $('#userCode').val();
-			if (code !== '') {
-				loadCode(code);
-			}
-		}
-
 	});
 
 });

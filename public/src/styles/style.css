@@ -178,6 +178,14 @@ body {
 	.mediumBigFont {
 		font-size: 0.9em;
 	}
+
+	.btn-font-resize {
+		font-size: 12px;
+	}
+	
+	.input-font-resize {
+		font-size: 12px;
+	}
 	
 }
 
@@ -189,6 +197,14 @@ body {
 
 	.mediumBigFont {
 		font-size: 0.7em;
+	}
+
+	.btn-font-resize {
+		font-size: 12px;
+	}
+
+	.input-font-resize {
+		font-size: 9px;
 	}
 	
 }
@@ -202,6 +218,14 @@ body {
 	.mediumBigFont {
 		font-size: 0.6em;
 	}
+
+	.btn-font-resize {
+		font-size: 8px;
+	}
+
+	.input-font-resize {
+		font-size: 6px;
+	}
 	
 }
 
@@ -213,6 +237,14 @@ body {
 
 	.mediumBigFont {
 		font-size: 0.6em;
+	}
+
+	.btn-font-resize {
+		font-size: 8px;
+	}
+
+	.input-font-resize {
+		font-size: 6px;
 	}
 	
 }
