@@ -28,25 +28,24 @@ var encodeFileToBase64 = function (file) {
     return new Buffer(bitmap).toString('base64');
 };
 
-var sendInvitationList = function (path, confirmados, total) {
+var sendInvitationList = function (path, confirmados, total, to) {
 	return new Promise(function (resolve, reject) {
 		var emailBody = getTemplate();
-		emailBody.to['luis.cordoba198@gmail.com'] = 'Luis Córdoba';
-		emailBody.to['mfdrexer19@gmail.com'] = 'María Drexler';
+		emailBody.to[to] = to;
 		emailBody.from.push('luis.cordoba@ibux.co.cr');
 		emailBody.from.push('Luis Córdoba');
 		emailBody.subject = 'Lista de Invitados';
 		emailBody.attachment = {'listaInvitados.xlsx': encodeFileToBase64(path)};
 		emailBody.html = '<h1>La lista de Invitados actualizada</h1><h3>Cantidad de confirmados: ' + confirmados + ' de ' + total + '</h3><p>Este correo fue solicitado para recibir la lista de invitados actualizada para la boda de María Drexler y Luis Córdoba.</p>';
-		// sendinObj.send_email(emailBody, function (err, data) {
-		// 	if (err) {
-		// 		return reject(err);
-		// 	}
-		// 	return resolve(path);
-		// });
+		sendinObj.send_email(emailBody, function (err, data) {
+			if (err) {
+				return reject(err);
+			}
+			return resolve(path);
+		});
 
 		//delete
-		return resolve(data);
+		// return resolve(data);
 	});
 };
 

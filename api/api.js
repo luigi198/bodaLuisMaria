@@ -19,7 +19,35 @@ var fs = require('fs');
 module.exports = {
   getList: function (req, res) {
 
-    req.db.collection('Invitado').find().toArray().then(function (data) {
+    if (!req.body.email) {
+      return responses.customErrorResponse(res, 600);
+    }
+    if (!req.body.password) {
+      return responses.customErrorResponse(res, 601);
+    }
+    if (req.body.honeypot !== '') {
+      return responses.customErrorResponse(res, 611);
+    }
+
+    var adminFound;
+
+    req.db.collection('Admin').find({email: req.body.email}).toArray().then(function (admin) {
+      return new Promise(function (resolve, reject) {
+        if (admin.length === 0) {
+          reject({code: 650});
+        } else {
+          if (admin[0].password !== req.body.password) {
+            reject({code: 651});
+          } else {
+            adminFound = admin[0];
+            resolve();
+          }
+        }
+      });
+    }).then(function () {
+      return req.db.collection('Invitado').find().toArray();
+    })
+    .then(function (data) {
       return new Promise(function (resolve, reject) {
         var model = mongoXlsx.buildDynamicModel(data);
         var confirmados = 0;
@@ -28,8 +56,8 @@ module.exports = {
 
         for (i = 0, n = data.length; i<n; i++) {
           totalInvitados++;
-          if (data[i].confirmado) {
-            confirmados++;
+          if (data[i].invitados) {
+            confirmados = confirmados + data[i].invitados.length;
           }
 
           if (Array.isArray(data[i].invitados) && data[i].invitados.length > 0) {
@@ -49,7 +77,7 @@ module.exports = {
         });
       });
     }).then(function (obj) {
-      return mail.sendInvitationList(obj.path, obj.confirmados, obj.total);
+      return mail.sendInvitationList(obj.path, obj.confirmados, obj.total, adminFound.email);
     }).then(function (fullPath) {
       return new Promise(function (resolve, reject) {
         fs.unlink(fullPath, function (err) {
@@ -64,6 +92,7 @@ module.exports = {
       responses.successResponse(res, {});
     })
     .catch(function (e) {
+      console.log(e);
       responses.errorResponse(res, e);
     });
 

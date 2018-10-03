@@ -268,12 +268,27 @@ db.Invitado.insert({
     code: '241018'
 });
 
-//TODO segundo apellido
 db.Invitado.insert({
     firstName: 'Ana',
     lastName: 'Zúñiga',
-    secondLastName: '',
+    secondLastName: 'Espinoza',
     cantidadInvitados: 2,
     invitados: [],
     code: '091018'
+});
+
+db.Invitado.insert({
+    firstName: 'Alonso',
+    lastName: 'Vega',
+    secondLastName: 'Brenes',
+    cantidadInvitados: 2,
+    invitados: [],
+    code: '020318'
+});
+
+db.Admin.insert({email: 'luis.cordoba198@gmail.com',password: 'bodaLuisMariaAdminLuigi'});
+
+db.Admin.insert({
+    email: 'info@nataliasantamariacr.com',
+    password: 'bodaLuisMariaAdminNati'
 });
