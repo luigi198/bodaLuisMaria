@@ -55,14 +55,13 @@ module.exports = {
         var i, n, x, y;
 
         for (i = 0, n = data.length; i<n; i++) {
-          totalInvitados++;
+          totalInvitados = totalInvitados + data[i].cantidadInvitados;
           if (data[i].invitados) {
             confirmados = confirmados + data[i].invitados.length;
           }
 
           if (Array.isArray(data[i].invitados) && data[i].invitados.length > 0) {
             for (x = 0, y = data[i].invitados.length; x<y; x++) {
-              totalInvitados++;
               if (data[i].invitados[x].confirmado) {
                 confirmados++;
               }
