@@ -248,3 +248,63 @@ body {
 	}
 	
 }
+
+@media (max-width: 375px) {
+	
+	.bigFont {
+		font-size: 0.9em;
+	}
+
+	.mediumBigFont {
+		font-size: 8px;
+	}
+
+	.btn-font-resize {
+		font-size: 7px;
+	}
+
+	.input-font-resize {
+		font-size: 5px;
+	}
+	
+}
+
+@media (max-width: 350px) {
+	
+	.bigFont {
+		font-size: 0.8em;
+	}
+
+	.mediumBigFont {
+		font-size: 8px;
+	}
+
+	.btn-font-resize {
+		font-size: 7px;
+	}
+
+	.input-font-resize {
+		font-size: 4px;
+	}
+	
+}
+
+@media (max-width: 330px) {
+	
+	.bigFont {
+		font-size: 0.7em;
+	}
+
+	.mediumBigFont {
+		font-size: 7px;
+	}
+
+	.btn-font-resize {
+		font-size: 6px;
+	}
+
+	.input-font-resize {
+		font-size: 4px;
+	}
+	
+}

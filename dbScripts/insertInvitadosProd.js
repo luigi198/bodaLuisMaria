@@ -101,7 +101,7 @@ db.Invitado.insert({
     firstName: 'Gabriela',
     lastName: 'Arias',
     secondLastName: 'Bañuelos',
-    cantidadInvitados: 2,
+    cantidadInvitados: 1,
     invitados: [],
     code: '220118'
 });
@@ -286,9 +286,36 @@ db.Invitado.insert({
     code: '020318'
 });
 
+db.Invitado.insert({
+    firstName: 'Paulina',
+    lastName: 'Alvarado',
+    secondLastName: 'Barquero',
+    cantidadInvitados: 2,
+    invitados: [],
+    code: '161218'
+});
+
+db.Invitado.insert({
+    firstName: 'Génesis',
+    lastName: 'Madriz',
+    secondLastName: 'Hidalgo',
+    cantidadInvitados: 2,
+    invitados: [],
+    code: '270898'
+});
+
+db.Invitado.insert({
+    firstName: 'Florencia',
+    lastName: 'Caruso',
+    secondLastName: '',
+    cantidadInvitados: 2,
+    invitados: [],
+    code: '080418'
+});
+
 db.Admin.insert({email: 'luis.cordoba198@gmail.com',password: 'bodaLuisMariaAdminLuigi'});
 
 db.Admin.insert({
-    email: 'info@nataliasantamariacr.com',
+    email: 'asistentenseventos@gmail.com',
     password: 'bodaLuisMariaAdminNati'
 });
