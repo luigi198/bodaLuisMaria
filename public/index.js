@@ -42,12 +42,13 @@ var removeGuest = function () {
 		};
 
 		$.post('/removeGuest', obj, function (response) {
+			invitado = response.Invitado;
 			$('#guestDataContainer' + guestNumber).remove();
 			if (invitado) {
-				invitado.invitados.splice(guestNumber, 1);
+				removeGuestUnbind();
+				addGuestUnbind();
 				$('#guestsData').empty();
 				$('#guestsInformation').empty();
-				removeGuestUnbind();
 
 				var i, n = invitado.cantidadInvitados - invitado.invitados.length;
 				for (i = 0; i<n; i++) {
@@ -111,12 +112,24 @@ var addGuest = function () {
 			}
 
 			$.post('/addGuest', body, function (response) {
-				$('#guestContainer' + guestNumber).remove();
-				invitado.invitados.push(guestObj);
-				addGuestUnbind();
+				invitado = response.Invitado;
 				removeGuestUnbind();
-				addGuestData(guestObj, invitado.invitados.length - 1);
+				addGuestUnbind();
+				$('#guestContainer' + guestNumber).remove();
+				$('#guestsData').empty();
+				$('#guestsInformation').empty();
+
+				var i, n = invitado.cantidadInvitados - invitado.invitados.length;
+				for (i = 0; i<n; i++) {
+					addGuestInfo(i);
+				}
+	
 				addGuest();
+	
+				for (i = 0, n = invitado.invitados.length; i<n; i++) {
+					addGuestData(invitado.invitados[i], i);
+				}
+	
 				if (invitado.invitados.length > 0) {
 					removeGuest();
 				}
@@ -232,7 +245,6 @@ $(document).ready(function () {
 		if (page === 4 || page === 5) {
 			$('body').off('click', '#loadConfirmBtn');
 			$('body').on('click', '#loadConfirmBtn', function (e) {
-				console.log('entro');
 				$("#flipbook").turn("disable", false);
 				
 				$('#loadConfirmBtn').prop('disabled', true);
@@ -248,10 +260,11 @@ $(document).ready(function () {
 
 		if (page === 8 || page === 9) {
 			if (invitado) {
+				removeGuestUnbind();
+				addGuestUnbind();
 				$("#guestAmount").text(" (" + invitado.cantidadInvitados + ")");
 				$('#guestsData').empty();
 				$('#guestsInformation').empty();
-				removeGuestUnbind();
 
 				var i, n = invitado.cantidadInvitados - invitado.invitados.length;
 				for (i = 0; i<n; i++) {

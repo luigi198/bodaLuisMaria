@@ -91,7 +91,7 @@ module.exports = {
       responses.successResponse(res, {});
     })
     .catch(function (e) {
-      console.log(e);
+      console.error(e);
       responses.errorResponse(res, e);
     });
 
@@ -123,7 +123,7 @@ module.exports = {
 
       })
       .catch(function (e) {
-        console.log(e);
+        console.error(e);
         responses.errorResponse(res, e);
       })
 
@@ -145,7 +145,7 @@ module.exports = {
       })
       .catch(function (e) {
         console.error(e);
-        responses.errorResponse(e);
+        responses.errorResponse(res, e);
       });
       
   },
@@ -164,6 +164,8 @@ module.exports = {
       return responses.customErrorResponse(res, 609);
     }
 
+    var thisInvitado;
+
     req.db.collection('Invitado').find({code: req.body.code}).toArray()
       .then(function (array) {
         return new Promise(function (resolve, reject) {
@@ -177,6 +179,7 @@ module.exports = {
       .then(function (invitado) {
         if (invitado.cantidadInvitados > invitado.invitados.length) {
           invitado.invitados.push(req.body.guest);
+          thisInvitado = invitado;
           return req.db.collection('Invitado').update({code: req.body.code}, {$set: {
             invitados: invitado.invitados
           }});
@@ -185,11 +188,11 @@ module.exports = {
         }
       })
       .then(function () {
-        responses.successResponse(res, {});
+        responses.successResponse(res, {Invitado: thisInvitado});
       })
       .catch(function (e) {
         console.error(e);
-        responses.errorResponse(e);
+        responses.errorResponse(res, e);
       });
 
   },
@@ -203,6 +206,8 @@ module.exports = {
     if (!req.body.guest) {
       return responses.customErrorResponse(res, 608);
     }
+
+    var thisInvitado;
 
     req.db.collection('Invitado').find({code: req.body.code}).toArray()
       .then(function (array) {
@@ -224,16 +229,18 @@ module.exports = {
           }
         }
         
+        thisInvitado = invitado;
+
         return req.db.collection('Invitado').update({code: req.body.code}, {$set: {
           invitados: invitado.invitados
         }});
       })
       .then(function () {
-        responses.successResponse(res, {});
+        responses.successResponse(res, {Invitado: thisInvitado});
       })
       .catch(function (e) {
         console.error(e);
-        responses.errorResponse(e);
+        responses.errorResponse(res, e);
       });
 
   }
